@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+    <!-- 引入配置文件 -->
+    <bean
+            class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:jdbc.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 配置数据源 -->
+    <bean id="dataSourceMySql" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close">
+        <property name="driverClass">
+            <value>${c3p0.driverClass}</value>
+        </property>
+        <property name="jdbcUrl">
+            <value>${c3p0.jdbcUrl}</value>
+        </property>
+        <property name="user">
+            <value>${c3p0.user}</value>
+        </property>
+        <property name="password">
+            <value>${c3p0.password}</value>
+        </property>
+        <property name="maxPoolSize">
+            <value>${c3p0.maxPoolSize}</value>
+        </property>
+        <property name="minPoolSize">
+            <value>${c3p0.minPoolSize}</value>
+        </property>
+        <property name="initialPoolSize">
+            <value>${c3p0.initialPoolSize}</value>
+        </property>
+        <property name="maxIdleTime">
+            <value>${c3p0.maxIdleTime}</value>
+        </property>
+    </bean>
+
+    <!-- 会话配置 -->
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource">
+            <ref bean="dataSourceMySql"/>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.dynamic-insert">true</prop>
+                <prop key="hibernate.dynamic-update">true</prop>
+                <prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+                <prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/bbs</prop>
+                <prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
+            </props>
+        </property>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.org.po.Admin</value>
+                <value>com.org.po.Board</value>
+                <value>com.org.po.Post</value>
+                <value>com.org.po.Reply</value>
+                <value>com.org.po.Student</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- TransactionManager -->
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory"/>
+        </property>
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="add*" propagation="REQUIRED"/>
+            <tx:method name="create*" propagation="REQUIRED"/>
+            <tx:method name="insert*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="merge*" propagation="REQUIRED"/>
+            <tx:method name="del*" propagation="REQUIRED"/>
+            <tx:method name="remove*" propagation="REQUIRED"/>
+            <tx:method name="put*" propagation="REQUIRED"/>
+            <tx:method name="use*" propagation="REQUIRED"/>
+            <tx:method name="get*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="count*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="find*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="list*" propagation="REQUIRED" read-only="true"/>
+            <tx:method name="*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 还没搞清楚这个干什么的 -->
+    <aop:config expose-proxy="true">
+        <aop:pointcut id="txPointcut" expression="execution(* com.org.service.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+    </aop:config>
+
+
+    <!-- 配置dao、service、action等 -->
+    <!--  Daos -->
+    <bean id="boardDao" class="com.org.dao.BoardDao">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory"/>
+        </property>
+    </bean>
+    <bean id="postDao" class="com.org.dao.PostDao">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory"/>
+        </property>
+    </bean>
+    <bean id="studentDao" class="com.org.dao.StudentDao">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory"/>
+        </property>
+    </bean>
+    <bean id="replyDao" class="com.org.dao.ReplyDao">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory"/>
+        </property>
+    </bean>
+
+    <!-- services  -->
+    <bean id="boardService" class="com.org.service.BoardService">
+        <property name="boardDao">
+            <ref bean="boardDao"/>
+        </property>
+    </bean>
+    <bean id="postService" class="com.org.service.PostService">
+        <property name="postDao">
+            <ref bean="postDao"/>
+        </property>
+    </bean>
+    <bean id="studentService" class="com.org.service.StudentService">
+        <property name="studentDao">
+            <ref bean="studentDao"/>
+        </property>
+    </bean>
+    <bean id="replyService" class="com.org.service.ReplyService">
+        <property name="replyDao">
+            <ref bean="replyDao"/>
+        </property>
+    </bean>
+    <!-- actions  -->
+    <bean id="BoardList" class="com.org.action.BoardAction">
+        <property name="boardService">
+            <ref bean="boardService"/>
+        </property>
+        <property name="postService">
+            <ref bean="postService"></ref>
+        </property>
+    </bean>
+    <bean id="PostInfo" class="com.org.action.PostShowAction">
+        <property name="postService">
+            <ref bean="postService"></ref>
+        </property>
+        <property name="studentService">
+            <ref bean="studentService"></ref>
+        </property>
+        <property name="replyService">
+            <ref bean="replyService"></ref>
+        </property>
+
+    </bean>
+    <bean id="login" class="com.org.action.LoginAction">
+        <property name="studentService">
+            <ref bean="studentService"></ref>
+        </property>
+    </bean>
+    <bean id="addPost" class="com.org.action.AddPostAction">
+        <property name="postService">
+            <ref bean="postService"></ref>
+        </property>
+    </bean>
+    <bean id="addReply" class="com.org.action.ReplyAction">
+        <property name="replyService">
+            <ref bean="replyService"></ref>
+        </property>
+    </bean>
+    <bean id="register" class="com.org.action.RegisterAction">
+        <property name="studentService">
+            <ref bean="studentService"></ref>
+        </property>
+    </bean>
+    <bean id="studentGetPost" class="com.org.action.StudentGetPostAction">
+        <property name="postService">
+            <ref bean="postService"></ref>
+        </property>
+    </bean>
+    <bean id="postDeleteAction" class="com.org.action.PostDeleteAction">
+        <property name="postService">
+            <ref bean="postService"></ref>
+        </property>
+        <property name="replyService">
+            <ref bean="replyService"></ref>
+        </property>
+    </bean>
+</beans>

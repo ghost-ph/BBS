@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="BBSMYSQL" uuid="e6e33f99-bd60-4634-91aa-76804c32fa3c">
+    <database-info product="MySQL" version="5.0.87-community-nt" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower"/>
+    <schema name="" catalog="bbs"/>
+    <table name="admin" schema="" catalog="bbs" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="aoccount" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="password" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="qx" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="nickname" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="phone" sqlType="VARCHAR" precision="11" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="board_ibfk_1" table="board" schema="" catalog="bbs" columns="aid"/>
+      <exported-key name="post_ibfk_3" table="post" schema="" catalog="bbs" columns="aid"/>
+      <exported-key name="reply_ibfk_3" table="reply" schema="" catalog="bbs" columns="aid"/>
+    </table>
+    <table name="board" schema="" catalog="bbs" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="name" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="descrption" sqlType="VARCHAR" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="parentId" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="aid" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="boarding" sqlType="VARCHAR" precision="100" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="board_ibfk_1" columns="aid" ref-table="admin" ref-schema="" ref-catalog="bbs" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="board_ibfk_2" columns="parentId" ref-table="board" ref-schema="" ref-catalog="bbs" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="board_ibfk_2" table="board" schema="" catalog="bbs" columns="parentId"/>
+      <exported-key name="post_ibfk_2" table="post" schema="" catalog="bbs" columns="bid"/>
+    </table>
+    <table name="post" schema="" catalog="bbs" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="name" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="content" sqlType="LONGTEXT" precision="2147483647" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="publishTime" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="sid" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="aid" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="bid" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="count" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="post_ibfk_1" columns="sid" ref-table="student" ref-schema="" ref-catalog="bbs" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="post_ibfk_2" columns="bid" ref-table="board" ref-schema="" ref-catalog="bbs" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="post_ibfk_3" columns="aid" ref-table="admin" ref-schema="" ref-catalog="bbs" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="reply_ibfk_2" table="reply" schema="" catalog="bbs" columns="pid"/>
+    </table>
+    <table name="reply" schema="" catalog="bbs" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="NAME" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="content" sqlType="LONGTEXT" precision="2147483647" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="publishTime" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="pid" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="aid" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="sid" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="reply_ibfk_1" columns="sid" ref-table="student" ref-schema="" ref-catalog="bbs" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="reply_ibfk_2" columns="pid" ref-table="post" ref-schema="" ref-catalog="bbs" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="reply_ibfk_3" columns="aid" ref-table="admin" ref-schema="" ref-catalog="bbs" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="student" schema="" catalog="bbs" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="nickName" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="password" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="qq" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="realname" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="phone" sqlType="VARCHAR" precision="11" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="post_ibfk_1" table="post" schema="" catalog="bbs" columns="sid"/>
+      <exported-key name="reply_ibfk_1" table="reply" schema="" catalog="bbs" columns="sid"/>
+    </table>
+  </data-source>
+</component>

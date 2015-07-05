@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.1.dtd">
+
+<struts>
+    <constant name="struts.multipart.saveDir" value="\temp"/>
+    <constant name="struts.multipart.maxSize" value="304857600"/>
+    <!-- 配置全局result -->
+    <package name="main" extends="struts-default">
+        <global-results>
+            <result name="error">/error.jsp</result>
+        </global-results>
+        <!--
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="error" />
+        </global-exception-mappings>
+        -->
+    </package>
+
+    <package name="com.org" namespace="/board" extends="main">
+        <action name="boardIndex" class="com.org.action.BoardAction" method="BoardList">
+            <result name="success">BoardList.jsp</result>
+        </action>
+        <action name="postInfo" class="com.org.action.PostShowAction" method="getPostInfo">
+            <result name="success">PostInfo.jsp</result>
+        </action>
+        <action name="login" class="com.org.action.LoginAction" method="login">
+            <result name="success" type="chain">boardIndex</result>
+            <result name="error">login.jsp</result>
+        </action>
+        <action name="addPost" class="com.org.action.AddPostAction" method="addPost">
+            <result name="success" type="chain">boardIndex</result>
+            <result name="error">login.jsp</result>
+        </action>
+        <action name="addReply" class="com.org.action.ReplyAction" method="addReply">
+            <result name="success" type="chain">postInfo</result>
+            <result name="error">login.jsp</result>
+        </action>
+        <action name="register" class="com.org.action.RegisterAction" method="register">
+            <result name="success" type="chain">boardIndex</result>
+            <result name="error">register.jsp</result>
+        </action>
+        <action name="studentGetPost" class="com.org.action.StudentGetPostAction">
+            <result name="success" >../student/StudentPostList.jsp</result>
+            <result name="error" >../board/login.jsp</result>
+        </action>
+        <action name="postDeleteAction" class="com.org.action.PostDeleteAction" method="delete">
+            <result name="success" type="chain">studentGetPost</result>
+        </action>
+    </package>
+
+</struts>
